@@ -27,10 +27,16 @@ export default function Home() {
           ],
         }),
       });
-      const data = await res.json();
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to get a response from the AI service.');
+      }
+
       setResponse(data.content || 'No response received.');
     } catch (err) {
-      setResponse('Error: ' + err.message);
+      setResponse('Error: ' + (err instanceof Error ? err.message : 'Unknown error'));
     } finally {
       setLoading(false);
     }
