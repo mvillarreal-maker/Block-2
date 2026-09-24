@@ -1,0 +1,3 @@
+﻿Category: AI
+student-report
+I am building a Python app that checks if the setup is complete and summarises notes for the class.

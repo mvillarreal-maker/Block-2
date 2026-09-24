@@ -3,13 +3,13 @@
 import { useState } from 'react';
 
 export default function Home() {
-  const [message, setMessage] = useState('');
+  const [topic, setTopic] = useState('');
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!topic.trim()) return;
 
     setLoading(true);
     setResponse('');
@@ -19,7 +19,12 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [{ role: 'user', content: message }],
+          messages: [
+            {
+              role: 'user',
+              content: `Explain the topic "${topic}" in exactly 3 bullet points. Keep each bullet brief and informative.`,
+            },
+          ],
         }),
       });
       const data = await res.json();
@@ -32,25 +37,29 @@ export default function Home() {
   }
 
   return (
-    <main style={{ maxWidth: 600, margin: '4rem auto', padding: '0 1rem', fontFamily: 'sans-serif' }}>
+    <main style={{ maxWidth: 700, margin: '4rem auto', padding: '0 1rem', fontFamily: 'sans-serif' }}>
       <h1>Course Companion</h1>
-      <p>Ask the AI anything to get started.</p>
+      <p>Type a topic and get a 3-point explanation.</p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '0.75rem', marginTop: '1.5rem' }}>
+        <label htmlFor="topic" style={{ fontWeight: 600 }}>
+          Topic
+        </label>
         <input
+          id="topic"
           type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Ask a question..."
-          style={{ flex: 1, padding: '0.5rem', fontSize: '1rem' }}
+          value={topic}
+          onChange={(e) => setTopic(e.target.value)}
+          placeholder="e.g. photosynthesis"
+          style={{ padding: '0.75rem', fontSize: '1rem' }}
         />
-        <button type="submit" disabled={loading} style={{ padding: '0.5rem 1rem', fontSize: '1rem' }}>
-          {loading ? 'Thinking...' : 'Ask'}
+        <button type="submit" disabled={loading} style={{ padding: '0.75rem 1rem', fontSize: '1rem' }}>
+          {loading ? 'Thinking...' : 'Explain'}
         </button>
       </form>
 
       {response && (
-        <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#f5f5f5', borderRadius: '8px' }}>
+        <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#f5f5f5', borderRadius: '8px', whiteSpace: 'pre-wrap' }}>
           {response}
         </div>
       )}
